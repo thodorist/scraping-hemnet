@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 today=$(date +%Y-%m-%d)
-mkdir datalayers/$today/
+mkdir /home/theotheolog/scraping-hemnet/datalayers/$today/
 
 ## write headers to a CSV file named "data_YYYY-MM-DD.csv"
 echo "property_id,broker_firm,broker_agency_id,location,municipality,postal_city,"\
@@ -9,16 +9,16 @@ echo "property_id,broker_firm,broker_agency_id,location,municipality,postal_city
 "street_address,floor,rooms,living_area,price_per_m2,price,borattavgift,"\
 "upcoming_open_houses,long_description,has_floorplan,"\
 "publication_date,construction_year,housing_cooperative,amenities,"\
-"listing_package_type,water_distance,coastline_distance" > csv_files/data_$today.csv
+"listing_package_type,water_distance,coastline_distance" > /home/theotheolog/scraping-hemnet/csv_files/data_$today.csv
 
 j=1
 
 # iterate through all house listings from the last day
-for i in $(cat links/"$today"_links.txt)
+for i in $(cat /home/theotheolog/scraping-hemnet/links/"$today"_links.txt)
 do
     # isolate the part of the html code that is providing with the data, save it into a specific location
-    curl $i | sed -n '/dataLayer =/,$p' | sed -n '/dataLayer.push/q;p' > datalayers/$today/datalayer_$j.txt
-    file_to_read="datalayers/$today/datalayer_$j.txt"
+    curl $i | sed -n '/dataLayer =/,$p' | sed -n '/dataLayer.push/q;p' > /home/theotheolog/scraping-hemnet/datalayers/$today/datalayer_$j.txt
+    file_to_read="/home/theotheolog/scraping-hemnet/datalayers/$today/datalayer_$j.txt"
 
     # property_id
     id=$(cat $file_to_read | grep -Po '"id":\K[^,]+')
@@ -104,7 +104,7 @@ echo "$id,$broker_firm,$agency_id,$location,$municipality,$postal_city,$images_c
 "$street_address,$floor,$rooms,$living_area,$price_per_sq_m2,$price,$borattavgift,"\
 "$upcoming_open_houses,$long_description,"\
 "$has_floor_plan,$publication_date,$construction_year,$housing_cooperative,"\
-"$amenities,$listing_package_type,$water_distance,$coastline_distance" >> csv_files/data_$today.csv
+"$amenities,$listing_package_type,$water_distance,$coastline_distance" >> /home/theotheolog/scraping-hemnet/csv_files/data_$today.csv
 
     j=$((j+1))
 
