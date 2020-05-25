@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-today=$(date +%Y-%m-%d)
-mkdir /home/theotheolog/scraping-hemnet/datalayers/$today/
+yesterday=$(date -d "yesterday" '+%Y-%m-%d')
+
+username="theotheolog"
+
+mkdir /home/$username/scraping-hemnet/datalayers/$yesterday/
 
 ## write headers to a CSV file named "data_YYYY-MM-DD.csv"
 echo "property_id,broker_firm,broker_agency_id,location,municipality,postal_city,"\
@@ -9,20 +12,20 @@ echo "property_id,broker_firm,broker_agency_id,location,municipality,postal_city
 "street_address,floor,rooms,living_area,price_per_m2,price,borattavgift,"\
 "upcoming_open_houses,long_description,has_floorplan,"\
 "publication_date,construction_year,housing_cooperative,amenities,"\
-"listing_package_type,water_distance,coastline_distance" > /home/theotheolog/scraping-hemnet/csv_files/data_$today.csv
+"listing_package_type,water_distance,coastline_distance" > /home/$username/scraping-hemnet/csv_files/data_$yesterday.csv
 
 j=1
 
 # iterate through all house listings from the last day
-for i in $(cat /home/theotheolog/scraping-hemnet/links/"$today"_links.txt)
+for i in $(cat /home/"$username"/scraping-hemnet/links/"$yesterday"_links.txt)
 do
     # isolate the part of the html code that is providing with the data, save it into a specific location
-    curl $i | sed -n '/dataLayer =/,$p' | sed -n '/dataLayer.push/q;p' > /home/theotheolog/scraping-hemnet/datalayers/$today/datalayer_$j.txt
-    file_to_read="/home/theotheolog/scraping-hemnet/datalayers/$today/datalayer_$j.txt"
+    curl $i | sed -n '/dataLayer =/,$p' | sed -n '/dataLayer.push/q;p' > /home/$username/scraping-hemnet/datalayers/$yesterday/datalayer_$j.txt
+    file_to_read="/home/$username/scraping-hemnet/datalayers/$yesterday/datalayer_$j.txt"
 
     # property_id
     id=$(cat $file_to_read | grep -Po '"id":\K[^,]+')
-    
+
     # broker_firm
     broker_firm=$(cat $file_to_read | grep -Po 'broker_firm":"\K[^"]+')
 
@@ -41,8 +44,10 @@ do
     # images_count
     images_count=$(cat $file_to_read | grep -Po 'images_count":\K[^,]+')
 
+
     # new_production
     new_production=$(cat $file_to_read | grep -Po 'new_production":\K[^,]+')
+
 
     # offers_selling_price
     offers_selling_price=$(cat $file_to_read | grep -Po 'offers_selling_price":\K[^,]+')
@@ -80,8 +85,10 @@ do
     # publication_date
     publication_date=$(cat $file_to_read | grep -Po 'publication_date":"\K[^"]+')
 
+
     # construction_year
     construction_year=$(cat $file_to_read | grep -Po 'construction_year":"\K[^"]+')
+
 
     # housing_cooperative
     housing_cooperative=$(cat $file_to_read | grep -Po 'housing_cooperative":"\K[^"]+')
@@ -104,8 +111,10 @@ echo "$id,$broker_firm,$agency_id,$location,$municipality,$postal_city,$images_c
 "$street_address,$floor,$rooms,$living_area,$price_per_sq_m2,$price,$borattavgift,"\
 "$upcoming_open_houses,$long_description,"\
 "$has_floor_plan,$publication_date,$construction_year,$housing_cooperative,"\
-"$amenities,$listing_package_type,$water_distance,$coastline_distance" >> /home/theotheolog/scraping-hemnet/csv_files/data_$today.csv
+"$amenities,$listing_package_type,$water_distance,$coastline_distance" >> /home/$username/scraping-hemnet/csv_files/data_$yesterday.csv
 
     j=$((j+1))
 
 done
+
+
