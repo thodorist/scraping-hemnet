@@ -29,7 +29,8 @@ do
 		# start from yesterdays listings up until (and not including) listings that are 2 days old
 		cat /home/"$username"/scraping-hemnet/htmls/"$yesterday"_htmls/file_"$i"_to_scrape.txt | \
 		sed -n '/<span datetime=\"'$yesterday'/,$p' | sed -n '/<span datetime=\"'$two_days_ago'/q;p' | \
-		grep 'href=\"https://www.hemnet.se/bostad/' | sed 's/href=//g' | sed 's/"//g' | sed 's/ //g' >> /home/"$username"/scraping-hemnet/links/"$yesterday"_links.txt
+		egrep 'href=\"https://www.hemnet.se/bostad/|href=\"https://www.hemnet.se/nybyggnadsprojekt/' | \
+		sed 's/href=//g' | sed 's/"//g' | sed 's/ //g' >> /home/"$username"/scraping-hemnet/links/"$yesterday"_links.txt
 		
 		scrape="false"
 		echo "I scraped page $i"
@@ -39,7 +40,8 @@ do
 	    # isolate all the individual web links of each and every listing,
 	    # start(or continue) from those listings that were posted on the previous day
 	    cat /home/"$username"/scraping-hemnet/htmls/"$yesterday"_htmls/file_"$i"_to_scrape.txt | sed -n '/<span datetime=\"'$yesterday'/,$p' | \
-	    grep 'href=\"https://www.hemnet.se/bostad/' | sed 's/href=//g' | sed 's/"//g'| sed 's/ //g' >> /home/"$username"/scraping-hemnet/links/"$yesterday"_links.txt
+	    egrep 'href=\"https://www.hemnet.se/bostad/|href=\"https://www.hemnet.se/nybyggnadsprojekt/' | \
+	    sed 's/href=//g' | sed 's/"//g'| sed 's/ //g' >> /home/"$username"/scraping-hemnet/links/"$yesterday"_links.txt
 	
 	    echo "I scraped page $i"
 	    echo "I should scrape the next page, $((i+1))"

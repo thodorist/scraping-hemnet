@@ -17,7 +17,7 @@ echo "property_id,broker_firm,broker_agency_id,location,municipality,postal_city
 j=1
 
 # iterate through all house listings from the last day
-for i in $(cat /home/"$username"/scraping-hemnet/links/"$yesterday"_links.txt)
+for i in $(cat /home/"$username"/scraping-hemnet/links/"$yesterday"_links.txt | grep 'https://www.hemnet.se/bostad')
 do
     # isolate the part of the html code that is providing with the data, save it into a specific location
     curl $i | sed -n '/dataLayer =/,$p' | sed -n '/dataLayer.push/q;p' > /home/$username/scraping-hemnet/datalayers/$yesterday/datalayer_$j.txt
