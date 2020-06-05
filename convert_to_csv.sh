@@ -27,7 +27,7 @@ do
     id=$(cat $file_to_read | grep -Po '"id":\K[^,]+')
 
     # broker_firm
-    broker_firm=$(cat $file_to_read | grep -Po 'broker_firm":"\K[^"]+')
+    broker_firm=$(cat $file_to_read | grep -Po 'broker_firm":"\K[^"]+' | sed 's/,//g')
 
     # agency_id
     agency_id=$(cat $file_to_read | grep -Po 'broker_agency_id":\K[^,]+')
@@ -91,7 +91,7 @@ do
 
 
     # housing_cooperative
-    housing_cooperative=$(cat $file_to_read | grep -Po 'housing_cooperative":"\K[^"]+')
+    housing_cooperative=$(cat $file_to_read | grep -Po 'housing_cooperative":"\K[^"]+' | sed 's/,//g')
 
     # amenities
     amenities=$(cat $file_to_read | grep -Po 'amenities":\[\K[^]]+' | sed 's/"//g' | sed 's/,/ /g')
